@@ -1,0 +1,5 @@
+*.yml
+*.yaml
+package.json
+*.json
+*.md
