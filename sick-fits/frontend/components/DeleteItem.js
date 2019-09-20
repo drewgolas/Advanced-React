@@ -11,19 +11,15 @@ const DELETE_ITEM_MUTATION = gql`
     }
 `;
 
-export default class DeleteItem extends Component {
+class DeleteItem extends Component {
     update = (cache, payload) => {
-        // manually update cache
-        // read cache for specific items
+        // manually update the cache on the client, so it matches the server
+        // 1. Read the cache for the items we want
         const data = cache.readQuery({ query: ALL_ITEMS_QUERY });
-        console.log(data);
-        // filter deleted item
-        data.items = data.items.filter((item) => {
-            return item.id !== payload.data.deleteItem.id;
-        });
-        console.log(data.items);
-
-        // put stuff back
+        console.log(data, payload);
+        // 2. Filter the deleted itemout of the page
+        data.items = data.items.filter((item) => item.id !== payload.data.deleteItem.id);
+        // 3. Put the items back!
         cache.writeQuery({ query: ALL_ITEMS_QUERY, data });
     };
     render() {
@@ -36,8 +32,10 @@ export default class DeleteItem extends Component {
                 {(deleteItem, { error }) => (
                     <button
                         onClick={() => {
-                            if (confirm("Are you sure you want to delete this?")) {
-                                deleteItem();
+                            if (confirm("Are you sure you want to delete this item?")) {
+                                deleteItem().catch((err) => {
+                                    alert(err.message);
+                                });
                             }
                         }}
                     >
@@ -48,3 +46,5 @@ export default class DeleteItem extends Component {
         );
     }
 }
+
+export default DeleteItem;
